@@ -122,6 +122,61 @@ const HousePage = () => {
   return (
     <section className="bg-slate-50 min-h-screen font-sans overflow-x-hidden pt-6">
 
+        {/* FILTER HEADER */}
+      <div className="bg-slate-100 border-b border-slate-200 px-4 py-6 shadow-sm sticky top-16 z-30">
+        <div className="max-w-2xl mx-auto flex flex-col gap-4">
+          <form
+            onSubmit={(e) => { e.preventDefault(); fetchRooms(); }}
+            className="flex items-center bg-slate-100 border border-slate-200 rounded-2xl px-2 py-1.5 focus-within:bg-white focus-within:ring-4 ring-blue-50 transition-all"
+          >
+            <input
+              type="text"
+              placeholder="Search by location or name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent border-none p-2 text-sm outline-none text-slate-800 font-bold min-w-0"
+            />
+            <button type="submit" className="bg-blue-600 text-white px-5 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-md">
+              Search
+            </button>
+          </form>
+
+        
+           <div className="grid grid-cols-2 gap-2 w-full">
+            <div className="relative" ref={locRef}>
+              <button onClick={() => { setLocOpen(!locOpen); setSortOpen(false); setGenderOpen(false); }} className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white relative transition-all ${locOpen ? "border-blue-500 ring-4 ring-blue-50" : "border-slate-200"}`}>
+                <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">Location</span>
+                <span className="text-[11px] font-bold text-slate-800 capitalize truncate w-full pr-6 text-left">{location}</span>
+                <ChevronIcon isOpen={locOpen} />
+              </button>
+              {locOpen && (
+                <ul className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
+                  {["all", "oleh", "ozoro", "abraka"].map((loc) => (
+                    <li key={loc} onClick={() => { setLocation(loc); setLocOpen(false); }} className={`px-4 py-3 text-xs font-bold capitalize cursor-pointer transition-colors ${location === loc ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}>{loc}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="relative" ref={sortRef}>
+              <button onClick={() => { setSortOpen(!sortOpen); setLocOpen(false); setGenderOpen(false); }} className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white relative transition-all ${sortOpen ? "border-blue-500 ring-4 ring-blue-50" : "border-slate-200"}`}>
+                <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">Sort By</span>
+                <span className="text-[11px] font-bold text-slate-800 truncate w-full pr-6 text-left">{sort === "newest" ? "Newest" : sort === "price_low" ? "Budget" : "Luxury"}</span>
+                <ChevronIcon isOpen={sortOpen} />
+              </button>
+              {sortOpen && (
+                <ul className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
+                  {[{ l: "Newest", v: "newest" }, { l: "Budget", v: "price_low" }, { l: "Luxury", v: "price_high" }].map((s) => (
+                    <li key={s.v} onClick={() => { setSort(s.v); setSortOpen(false); }} className={`px-4 py-3 text-xs font-bold cursor-pointer transition-colors ${sort === s.v ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}>{s.l}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          </div>
+        </div>
+      
+
       {/* CONTENT AREA */}
       <div className="max-w-7xl mx-auto p-6 mt-12 pb-24">
 
