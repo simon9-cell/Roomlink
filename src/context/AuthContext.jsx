@@ -1,187 +1,141 @@
-// import { createContext, useContext, useState } from "react";
-// import { supabase } from "../supabaseClient";
-// import { useEffect } from "react";
-
-// const AuthContext = createContext()
-
-//  const AuthProvider = ({children}) => {
-//  const [session, setSession] = useState(undefined)
-
-//  // sign up function
-
-//  const signUpNewUser = async (email, password)=> {
-//   const {error, data} = await supabase.auth.signUp({
-//    email: email,
-//    password: password,
-//   })
-
-//   if(error) {
-//    console.log("Error Ocurred while Singning Up", error.messsage);
-//    return {success: false, error}
-//   }
-//   return {success: true, data}
-//  }
-
-//  // sign in function
-
-//  const signInUser = async (email, password) => {
-   
-//   const {error, data} = await supabase.auth.signInWithPassword({
-//    email: email,
-//    password: password
-//   });
-
-//   if(error) {
-//    console.log("Error Occurred while Login In", error.message);
-//    return {success: false, error };
-//   }
-//   return {success: true, data};
-//  };
-
-//  const signOut = async ()=> {
-//   const {error} = await supabase.auth.signOut()
-
-//   if (error){
-//    console.log("Error occurred Signing Out", error.message)
-//   };
-//  }
-
-//  useEffect(()=> {
-//   // 1. geting the session
-//    supabase.auth.getSession().then(({data: {session}}) => {
-//     setSession(session)
-//    });
-
-//    // 2. Set up the Listener and capture the subscription correctly
-//    const {data: {subscription}} =  supabase.auth.onAuthStateChange((_event, session) => {
-//     setSession(session)
-//    })
-
-//    // 3. CleanUp function
-
-//    return ()=> {
-//     subscription.unsubscribe()
-//    }
-
-//  }, [])
-
-
-//  return (
-//   <AuthContext.Provider value={{session, signUpNewUser, signOut, signInUser}}>
-//     {children}  
-//   </AuthContext.Provider>
-//  )
-// }
-
-// export default AuthProvider
-
-
-// export const useAuth = ()=>{
-//  return useContext(AuthContext);
-// };
-
-
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // --- Helper: Fetch Name from Profiles Table ---
-  const fetchProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("id", userId)
-        .single();
-
-      if (error) throw error;
-      setUserProfile(data);
-    } catch (error) {
-      console.log("Error fetching profile:", error.message);
-    }
-  };
-
-  // --- Sign Up: Auth + Profile Insert ---
-  const signUpNewUser = async (email, password, name) => {
-    // 1. Create the Auth User
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) return { success: false, error };
-
-    // 2. Insert the Name into your new Profiles table
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([{ id: data.user.id, full_name: name }]);
-
-      if (profileError) return { success: false, error: profileError };
-    }
-
-    return { success: true, data };
-  };
-
-  // --- Sign In ---
-  const signInUser = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) return { success: false, error };
-    return { success: true, data };
-  };
-
-  // --- Sign Out ---
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      setSession(null);
-      setUserProfile(null);
-    }
-  };
+  const [profileName, setProfileName] = useState("");
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) fetchProfile(session.user.id);
-      setLoading(false);
-    });
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        setSession(initialSession);
+        const currentUser = initialSession?.user ?? null;
+        setUser(currentUser);
 
-    // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-        console.log(session.user.id)
-      } else {
-        setUserProfile(null);
+        if (currentUser) {
+          fetchProfileName(currentUser.id);
+        }
+      } catch (error) {
+        console.error("Auth init error:", error.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
+    };
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      setSession(currentSession);
+      const currentUser = currentSession?.user ?? null;
+      setUser(currentUser);
+
+      if (event === 'SIGNED_IN' && currentUser) {
+        fetchProfileName(currentUser.id);
+      }
+
+      if (event === 'SIGNED_OUT') {
+        setProfileName("");
+        localStorage.clear(); 
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const fetchProfileName = async (userId) => {
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single();
+
+      if (data) {
+        setProfileName(data.full_name);
+      }
+    } catch (err) {
+      console.error("Error fetching profile name:", err);
+    }
+  };
+
+  // --- ADDED GOOGLE SIGN IN ---
+  const signInWithGoogle = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // window.location.origin detects if you are on localhost or a deployed site
+          redirectTo: window.location.origin + '/dashboard',
+        },
+      });
+      if (error) throw error;
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
+  const signUpNewUser = async (email, password, name) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } } 
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        await supabase.from('profiles').insert([
+          { id: data.user.id, full_name: name, email: email }
+        ]);
+        setProfileName(name);
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
+  const signInUser = async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
+  const signOutUser = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const value = {
+    session,
+    user,
+    userName: profileName || user?.user_metadata?.full_name || "User",
+    loading,
+    signUpNewUser,
+    signInUser,
+    signInWithGoogle, // ADDED TO VALUE OBJECT
+    signOutUser,
+  };
+
   return (
-    <AuthContext.Provider 
-      value={{ session, userProfile, signUpNewUser, signInUser, signOut, loading }}
-    >
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
-
+export const useAuth = () => useContext(AuthContext);
 export default AuthProvider;

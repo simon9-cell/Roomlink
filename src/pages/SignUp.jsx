@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -8,8 +7,10 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { signUpNewUser } = useAuth();
+
+  const { signUpNewUser, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,78 +24,137 @@ const SignUp = () => {
         setLoading(false);
         return;
       }
-      // Note: Supabase usually requires email confirmation. 
-      // If you haven't turned that off in Supabase settings, 
-      // navigate('/dashboard') might show an empty session.
-      navigate('/dashboard');
-    } catch (error) {
-      setError("An error occurred during sign up. Please try again.");
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Sign up failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError("Google connection failed.");
+      setGoogleLoading(false);
+    }
+  };
+
   return (
-    // Background: Facebook Light Gray (#F0F2F5)
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F0F2F5] px-6 py-12">
+    <div className="min-h-screen w-full bg-[#F0F2F5] flex flex-col items-center justify-center p-4">
       
-      {/* Brand Header */}
-      <Link to="/" className="mb-8">
-        <h1 className="text-4xl font-black text-[#1877F2] tracking-tighter">RoomLink</h1>
-      </Link>
-
-      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-xl border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-1">Create a New Account</h2>
-        <p className="text-gray-500 mb-8 text-center text-sm">
-          It's quick and easy. Already have an account? <Link className="text-[#1877F2] font-bold hover:underline" to='/signin'>Sign in</Link>
-        </p>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input 
-            type="text" 
-            placeholder="Full Name" 
-            className="p-4 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition-all"
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input 
-            type="email" 
-            placeholder="Email Address" 
-            className="p-4 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition-all"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input 
-            type="password" 
-            placeholder="New Password" 
-            className="p-4 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition-all"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+      {/* Compact Card (360px width) */}
+      <div className="w-full max-w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="p-5 sm:p-7">
           
-          <button 
-            type="submit"
-            className={`mt-2 text-white font-black py-3 rounded-lg text-lg transition-all ${
-              loading 
-                ? "bg-gray-400 cursor-not-allowed" 
-                : "bg-[#42b72a] hover:bg-[#36a420] active:scale-[0.98]"
-            }`}
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
-          </button>
-        </form>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 mt-4 py-3 px-3 rounded-lg flex items-center gap-2">
-            <span className="text-red-600 font-bold">⚠️</span>
-            <p className="text-red-600 text-sm font-medium">{error}</p>
+          {/* INTERNAL BRANDING */}
+          <div className="text-center mb-5">
+            <Link to="/" className="inline-block mb-1 hover:opacity-80 transition-opacity">
+              <h1 className="text-[#1877F2] tracking-tighter font-black text-xl uppercase italic leading-none">
+                Room<span className="text-slate-900">Link</span>
+              </h1>
+            </Link>
+            <h2 className="text-lg font-bold text-gray-800">Create Account</h2>
           </div>
-        )}
 
-        <p className="text-[11px] text-gray-400 text-center mt-6">
-          By clicking Sign Up, you agree to our Terms, Data Policy and Cookie Policy.
-        </p>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {/* Full Name Field */}
+            <div>
+              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#1877F2] text-sm"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#1877F2] text-sm"
+                placeholder="name@email.com"
+                required
+              />
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#1877F2] text-sm"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || googleLoading}
+              className="w-full bg-[#1877F2] text-white font-bold py-2.5 rounded-xl text-sm hover:brightness-105  active:scale-[0.98] transition-all disabled:bg-gray-300 mt-1"
+            >
+              {loading ? "..." : "Sign Up"}
+            </button>
+          </form>
+
+          {/* Minimalist Divider */}
+          <div className="flex items-center my-5">
+            <div className="flex-1 h-px bg-gray-100"></div>
+            <span className="px-3 text-gray-300 text-[8px] font-black uppercase tracking-widest">OR</span>
+            <div className="flex-1 h-px bg-gray-100"></div>
+          </div>
+
+          {/* Slim Google Button */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading || googleLoading}
+            className="w-full flex items-center justify-center gap-2 p-2 border border-gray-100 rounded-xl bg-white hover:bg-gray-50 transition-all font-bold text-gray-700 text-xs shadow-sm"
+          >
+            <img 
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+              alt="G" 
+              className="w-4 h-4" 
+            />
+            {googleLoading ? "..." : "Google"}
+          </button>
+
+          {error && (
+            <p className="mt-3 text-center text-[10px] font-bold text-red-500 leading-tight">
+              {error}
+            </p>
+          )}
+
+          <p className="text-center mt-5 text-gray-500 text-[11px]">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-[#1877F2] font-black hover:underline">
+              Sign In
+            </Link>
+          </p>
+        </div>
       </div>
+      
+      {/* Policy Text - Outside card to keep card short */}
+      <p className="max-w-[300px] text-[9px] text-gray-400 text-center mt-4 leading-tight">
+        By signing up, you agree to our <span className="underline cursor-pointer">Terms</span> and <span className="underline cursor-pointer">Privacy Policy</span>.
+      </p>
     </div>
   );
 };

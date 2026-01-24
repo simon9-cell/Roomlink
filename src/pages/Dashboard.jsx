@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
-  const { userProfile, session, signOut } = useAuth();
+  const { user, session, signOutUser, userName } = useAuth();
 
   const [view, setView] = useState("menu");
   const [loading, setLoading] = useState(false);
@@ -223,7 +223,7 @@ const Dashboard = () => {
 
   const handleSignOut = async () => {
   try {
-    await signOut(); // your existing signOut function
+    await signOutUser(); // your existing signOut function
     toast.success("Signed out successfully");
   } catch (error) {
     console.error(error.message);
@@ -268,7 +268,7 @@ const Dashboard = () => {
             <p className="text-gray-400 text-sm">
               Welcome back,{" "}
               <span className="font-bold text-white">
-                {userProfile?.full_name || "User"}
+                {user ? (userName !== "User" ? userName : "User") : "Guest"}
               </span>
             </p>
           </div>
