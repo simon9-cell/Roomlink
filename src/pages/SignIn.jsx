@@ -21,7 +21,7 @@ const SignIn = () => {
         setLoading(false);
         return;
       }
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
       setError("An Error Occurred, please try again");
     } finally {
@@ -32,41 +32,51 @@ const SignIn = () => {
   return (
     // Background is now a soft Facebook gray (#F0F2F5)
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#F0F2F5] px-6 py-12">
-      
       {/* Brand Label Above Card */}
-      <h1 className="text-4xl font-black text-[#1877F2] mb-6 tracking-tighter">RoomLink</h1>
+      <h1 className="text-blue-600 tracking-tighter font-black text-2xl uppercase italic">
+        Room<span className="text-slate-900">Link</span>
+      </h1>
 
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-xl border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-1">Log Into RoomLink</h2>
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-1">
+          Log Into RoomLink
+        </h2>
         <p className="text-gray-500 mb-8 text-center text-sm">
-          New here? <Link className="text-[#1877F2] font-bold hover:underline" to='/signup'>Create an account</Link>
+          New here?{" "}
+          <Link
+            className="text-[#1877F2] font-bold hover:underline"
+            to="/signup"
+          >
+            Create an account
+          </Link>
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          
-          <input 
-            type="email" 
-            placeholder="Email address" 
+          <input
+            type="email"
+            placeholder="Email address"
             // High contrast: Gray border, white background, dark text
             className="p-4 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition-all"
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="off"
             required
           />
-          
-          <input 
-            type="password" 
-            placeholder="Password" 
+
+          <input
+            type="password"
+            placeholder="Password"
             className="p-4 rounded-lg bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-transparent transition-all"
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="off"
             required
           />
-          
-          <button 
+
+          <button
             type="submit"
             // Facebook Blue Button
             className={`mt-2 text-white font-black py-3 rounded-lg text-lg transition-all ${
-              loading 
-                ? "bg-gray-400 cursor-not-allowed" 
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#1877F2] hover:bg-[#166fe5] active:scale-[0.98]"
             }`}
           >
@@ -75,9 +85,9 @@ const SignIn = () => {
         </form>
 
         <div className="border-t border-gray-200 mt-6 pt-6">
-           <p className="text-center text-gray-400 text-xs italic">
-             Secure login powered by Supabase
-           </p>
+          <p className="text-center text-gray-400 text-xs italic">
+            Secure login powered by Supabase
+          </p>
         </div>
 
         {error && (

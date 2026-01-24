@@ -175,7 +175,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider 
       value={{ session, userProfile, signUpNewUser, signInUser, signOut, loading }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
