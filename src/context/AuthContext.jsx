@@ -5,6 +5,7 @@ import {
   useState,
   useRef,
 } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
@@ -134,7 +135,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <LoadingSpinner /> : children}
     </AuthContext.Provider>
   );
 };
