@@ -114,8 +114,11 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const signOutUser = async () => {
+ const signOutUser = async () => {
     await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setProfileName("");
   };
 
   const value = {
