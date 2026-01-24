@@ -28,6 +28,19 @@ const HouseDetail = () => {
         if (error) throw error;
         setHouse(data);
 
+        // --- Dynamic Counter ---
+        const viewKey = `viewed_house_${id}`;
+        if (!sessionStorage.getItem(viewKey)) {
+          const { error: rpcError } = await supabase.rpc(
+            "increment_house_views",
+            {
+              target_id: id,
+            },
+          );
+          if (!rpcError) sessionStorage.setItem(viewKey, "true");
+        }
+        // ----------------------
+
         if (data.image_url) {
           const images = Array.isArray(data.image_url)
             ? data.image_url
@@ -42,8 +55,7 @@ const HouseDetail = () => {
     };
     fetchHouseDetail();
     console.log("Route ID:", id);
-console.log("Converted ID:", Number(id));
-
+    console.log("Converted ID:", Number(id));
   }, [id]);
 
   if (loading)
@@ -71,8 +83,8 @@ console.log("Converted ID:", Number(id));
     let finalNum = rawNum.startsWith("0")
       ? "234" + rawNum.substring(1)
       : rawNum.startsWith("234")
-      ? rawNum
-      : "234" + rawNum;
+        ? rawNum
+        : "234" + rawNum;
 
     const message =
       `🏠 *Property Inquiry: ${house.name}*\n\n` +
@@ -82,7 +94,7 @@ console.log("Converted ID:", Number(id));
       `Is this House still available for rent?`;
 
     return `https://api.whatsapp.com/send?phone=${finalNum}&text=${encodeURIComponent(
-      message
+      message,
     )}`;
   };
 
@@ -116,7 +128,9 @@ console.log("Converted ID:", Number(id));
                   key={index}
                   onClick={() => setActiveImg(img)}
                   className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-4 transition-all ${
-                    activeImg === img ? "border-blue-600 scale-105" : "border-white"
+                    activeImg === img
+                      ? "border-blue-600 scale-105"
+                      : "border-white"
                   }`}
                 >
                   <img
@@ -155,6 +169,31 @@ console.log("Converted ID:", Number(id));
               <HiOutlineCash size={32} />
             </div>
           </div>
+          {/* ---  VIEW COUNTER UI --- */}
+          <div className="flex items-center text-slate-500 gap-2 px-2 my-2">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            <span className="text-xs font-normal uppercase tracking-widest">
+              {house.views || 0} views
+            </span>
+          </div>
 
           <div className="bg-slate-100/50 p-6 rounded-3xl">
             <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 ">
@@ -168,7 +207,10 @@ console.log("Converted ID:", Number(id));
 
           {/* SAFETY DISCLAIMER */}
           <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex gap-3">
-            <HiOutlineShieldCheck className="text-amber-600 shrink-0" size={20} />
+            <HiOutlineShieldCheck
+              className="text-amber-600 shrink-0"
+              size={20}
+            />
             <p className="text-[12px] text-amber-800 font-medium leading-tight">
               <strong className="block uppercase text-[10px] tracking-widest mb-1">
                 Safety Note:
@@ -223,7 +265,6 @@ console.log("Converted ID:", Number(id));
                 Contact Info Unavailable
               </div>
             )}
-           
           </div>
         </div>
       </div>
