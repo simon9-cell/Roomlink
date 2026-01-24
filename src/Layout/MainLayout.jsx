@@ -1,22 +1,28 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react"; // 1. Added import
+import { Outlet, useLocation } from "react-router-dom"; // 2. Added useLocation
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer'
-
+import Footer from '../components/Footer';
 
 const MainLayout = () => {
+  const { pathname } = useLocation();
+
+  // 3. Put the effect directly in the Layout
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
-   // min-h-screen ensures the footer stays at the bottom even on short pages
     <div className="flex flex-col min-h-screen">
       <Navbar />
-    
-    {/* flex-grow pushes the footer down */}
+      
+      {/* pt-20 handles the fixed navbar height */}
       <main className="flex-grow pt-20">
-       <Outlet />
+        <Outlet />
       </main>
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;
