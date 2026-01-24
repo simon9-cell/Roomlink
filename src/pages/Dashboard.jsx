@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
-  const { user, session, signOutUser, userName } = useAuth();
+  const { user, session,signOutUser, userName } = useAuth();
 
   const [view, setView] = useState("menu");
   const [loading, setLoading] = useState(false);
   const [myListings, setMyListings] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     title: "",
@@ -225,6 +227,7 @@ const Dashboard = () => {
   try {
     await signOutUser(); // your existing signOut function
     toast.success("Signed out successfully");
+    navigate('/')
   } catch (error) {
     console.error(error.message);
     toast.error("Failed to sign out");
