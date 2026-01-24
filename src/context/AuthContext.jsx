@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
@@ -6,113 +12,106 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [profileName, setProfileName] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        
-        setSession(initialSession);
-        const currentUser = initialSession?.user ?? null;
-        setUser(currentUser);
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
-        if (currentUser) {
-          fetchProfileName(currentUser.id);
+    const init = async () => {
+      try {
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
+          await ensureProfile(currentSession.user);
         }
-      } catch (error) {
-        console.error("Auth init error:", error.message);
+      } catch (err) {
+        console.error("Auth Init Error:", err.message);
       } finally {
-        setLoading(false);
+        setLoading(false); // 🔑 This ensures the app renders even if there's an error
       }
     };
 
-    initializeAuth();
+    init();
 
+    // Set up the listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       setSession(currentSession);
-      const currentUser = currentSession?.user ?? null;
-      setUser(currentUser);
+      setUser(currentSession?.user ?? null);
 
-      if (event === 'SIGNED_IN' && currentUser) {
-        fetchProfileName(currentUser.id);
+      if (event === "SIGNED_IN" && currentSession?.user) {
+        await ensureProfile(currentSession.user);
       }
 
-      if (event === 'SIGNED_OUT') {
+      if (event === "SIGNED_OUT") {
         setProfileName("");
-        localStorage.clear(); 
       }
     });
 
-    return () => subscription.unsubscribe();
+    // 🛠️ Fixed the syntax error here
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
   }, []);
 
-  const fetchProfileName = async (userId) => {
+  // 🔐 ENSURE PROFILE EXISTS
+  const ensureProfile = async (user) => {
     try {
-      const { data } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', userId)
-        .single();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
 
-      if (data) {
-        setProfileName(data.full_name);
+      if (!profile) {
+        const name =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          "User";
+
+        await supabase.from("profiles").insert({
+          id: user.id,
+          full_name: name,
+          email: user.email,
+        });
+
+        setProfileName(name);
+      } else {
+        setProfileName(profile.full_name);
       }
     } catch (err) {
-      console.error("Error fetching profile name:", err);
+      console.error("Profile sync error:", err.message);
     }
   };
 
-  // --- ADDED GOOGLE SIGN IN ---
-  const signInWithGoogle = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          // window.location.origin detects if you are on localhost or a deployed site
-          redirectTo: window.location.origin + '/dashboard',
-        },
-      });
-      if (error) throw error;
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
+  // ---------- AUTH ACTIONS ----------
 
   const signUpNewUser = async (email, password, name) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: name } } 
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        await supabase.from('profiles').insert([
-          { id: data.user.id, full_name: name, email: email }
-        ]);
-        setProfileName(name);
-      }
-
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error };
-    }
+    return supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name } },
+    });
   };
 
   const signInUser = async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error };
-    }
+    return supabase.auth.signInWithPassword({ email, password });
+  };
+
+  const signInWithGoogle = async () => {
+    return supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/dashboard",
+      },
+    });
   };
 
   const signOutUser = async () => {
@@ -120,13 +119,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = {
-    session,
     user,
-    userName: profileName || user?.user_metadata?.full_name || "User",
+    session,
+    userName: profileName || "User",
     loading,
     signUpNewUser,
     signInUser,
-    signInWithGoogle, // ADDED TO VALUE OBJECT
+    signInWithGoogle,
     signOutUser,
   };
 
