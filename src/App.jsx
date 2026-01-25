@@ -1,4 +1,4 @@
-import {router} from './router.jsx'
+import router from './router.jsx'
 import { RouterProvider } from 'react-router-dom'
 
 function App() {

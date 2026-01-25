@@ -101,7 +101,7 @@ const HouseDetail = () => {
   const whatsappUrl = generateLink();
 
   return (
-    <div className="max-w-6xl mx-auto pt-24 pb-20 px-6 bg-slate-50 min-h-screen overflow-hidden mb-5">
+    <div className="max-w-6xl mx-auto pt-24 pb-20 px-6 dark:text-white dark:bg-gray-900 bg-slate-50 min-h-screen overflow-hidden mb-5">
       <Link
         to="/house"
         className="text-blue-600 mb-6 inline-flex items-center gap-2 font-black uppercase text-xs tracking-widest hover:-translate-x-1 transition-transform"
@@ -169,40 +169,47 @@ const HouseDetail = () => {
               <HiOutlineCash size={32} />
             </div>
           </div>
-          {/* ---  VIEW COUNTER UI --- */}
-          <div className="flex items-center text-slate-500 gap-2 px-2 my-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
-            <span className="text-xs font-normal uppercase tracking-widest">
-              {house.views || 0} views
-            </span>
+
+          {/* --- UPDATED VIEW COUNTER UI --- */}
+          <div className="flex items-center">
+            <div className="flex items-center bg-slate-200/50 text-slate-500 gap-2 px-3 py-1.5 rounded-full border border-slate-100">
+              <svg
+                className="w-4 h-4 dark:text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <span className="text-[10px] dark:text-white font-black uppercase tracking-tighter">
+                {house.views || 0} Views
+              </span>
+            </div>
           </div>
 
-          <div className="bg-slate-100/50 p-6 rounded-3xl">
-            <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 ">
+          {/* --- UPDATED DESCRIPTION SECTION --- */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">
               Description
             </h3>
-            <p className="text-slate-600 leading-relaxed font-bold">
-              {house.description ||
-                "The agent hasn't provided a description for this property yet."}
-            </p>
+            {/* Added max-height and overflow for very long text */}
+            <div className="max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+              <p className="text-slate-600 leading-relaxed text-sm font-medium whitespace-pre-line">
+                {house.description ||
+                  "The agent hasn't provided a description for this property yet."}
+              </p>
+            </div>
           </div>
 
           {/* SAFETY DISCLAIMER */}
@@ -223,7 +230,7 @@ const HouseDetail = () => {
           {/* UPDATED CONTACT SECTION */}
           <div className="mt-auto">
             {house.phone_number ? (
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 mb-3">
                 {/* CALL BUTTON */}
                 <a
                   href={`tel:${house.phone_number}`}
@@ -253,7 +260,7 @@ const HouseDetail = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ backgroundColor: "#25D366" }}
-                    className="flex-[1.5] flex items-center justify-center gap-3 text-white py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-xl shadow-green-100 hover:brightness-110 active:scale-95 transition-all"
+                    className="flex-[1.5] flex items-center justify-center gap-3 text-white py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-xl hover:brightness-110 active:scale-95 transition-all"
                   >
                     <HiOutlineChatAlt2 size={24} />
                     WhatsApp

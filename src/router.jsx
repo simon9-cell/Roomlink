@@ -9,49 +9,30 @@ import HouseDetail from "./pages/HouseDetail";
 import RoomPage from "./pages/RoomPage";
 import PrivateRoutes from "./components/PrivateRoutes";
 import RoomateDetail from "./pages/RoomateDetail";
+import ForgotPassword from "./pages/ForgotPassword";
+import UpdatePassword from "./pages/UpdatePassword";
+import NotFound from "./pages/NotFound";
 
-export const router = createBrowserRouter([
+
+const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <Homepage />,
-      },
-      {
-        path: "house",
-        element: <HousePage />,
-      },
-      {
-        path: "house/:id",
-        element: <HouseDetail />, // This shows the specific house based on ID
-      },
-      {
-        path: "rooms",
-        element: <RoomPage />
-      },
-      {
-        path: "rooms/:id",
-        element: <RoomateDetail />
-      },
-      {
-        path: "signin",
-        element: <Signin />,
-      },
-      {
-        path: "signup",
-        element: <SignUp />,
-      },
-      {
-        path: "dashboard",
-        element: (
-          <PrivateRoutes>
-            {" "}
-            <Dashboard />{" "}
-          </PrivateRoutes>
-        ),
-      },
+      { index: true, element: <Homepage /> },
+      { path: "house", element: <HousePage /> },
+      { path: "house/:id", element: <HouseDetail /> },
+      { path: "rooms", element: <RoomPage /> },
+      { path: "rooms/:id", element: <RoomateDetail /> },
+      { path: "signin", element: <Signin /> },
+      { path: "signup", element: <SignUp /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "update-password", element: <UpdatePassword /> },
+      
+      { path: "dashboard", element: <PrivateRoutes><Dashboard /></PrivateRoutes> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);
+
+export default router;

@@ -125,6 +125,7 @@ const HousePage = () => {
         viewBox="0 0 10 6"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+         className="dark:stroke-white  stroke-slate-600 "
       >
         <path
           d="M1 1L5 5L9 1"
@@ -132,58 +133,66 @@ const HousePage = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+         
         />
       </svg>
     </div>
   );
 
   return (
-    <section className="bg-slate-50 min-h-screen font-sans overflow-x-hidden pt-6">
+    <section className="bg-slate-200 max-md:mb-10 dark:text-white dark:bg-gray-900 min-h-screen font-sans overflow-x-hidden pt-6">
       {/* FILTER HEADER */}
-      <div className="bg-slate-100 border-b border-slate-200 px-4 py-6 shadow-sm sticky top-16 z-30">
+      <div className="bg-slate-200 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 px-4 py-6 shadow-sm sticky top-16 z-30 ">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
+          {/* Search Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               setActiveSearch(search);
               setCurrentPage(1);
             }}
-            className="flex items-center bg-slate-100 border border-slate-200 rounded-2xl px-2 py-1.5 focus-within:bg-white focus-within:ring-4 ring-blue-50 transition-all"
+            className="flex items-center bg-slate-100 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl px-2 py-1.5 focus-within:ring-2 focus-within:ring-blue-500 transition-all"
           >
             <input
               type="text"
               placeholder="Search by location or name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 bg-transparent border-none p-2 text-sm outline-none text-slate-800 font-bold min-w-0"
+              className="flex-1 bg-transparent border-none p-2 text-sm outline-none text-slate-800 dark:text-gray-100 font-bold min-w-0"
             />
             <button
               type="submit"
-              className="bg-blue-600 text-white px-5 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-md"
+              className="bg-blue-600 hover:bg-blue-700 text-white dark:text-white px-5 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-md"
             >
               Search
             </button>
           </form>
 
+          {/* Filters Grid */}
           <div className="grid grid-cols-2 gap-2 w-full">
+            {/* Location Dropdown */}
             <div className="relative" ref={locRef}>
               <button
                 onClick={() => {
                   setLocOpen(!locOpen);
-                  setSortOpen(false);
+                  setSortOpen(false);       
                 }}
-                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white relative transition-all ${locOpen ? "border-blue-500 ring-4 ring-blue-50" : "border-slate-200"}`}
+                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${
+                  locOpen
+                    ? "border-blue-500 dark:border-blue-400 shadow-md dark:shadow-black/50"
+                    : "border-slate-200 dark:border-gray-600"
+                }`}
               >
                 <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">
                   Location
                 </span>
-                <span className="text-[11px] font-bold text-slate-800 capitalize truncate w-full pr-6 text-left">
+                <span className="text-[11px] font-bold truncate w-full pr-6 text-left">
                   {location}
                 </span>
                 <ChevronIcon isOpen={locOpen} />
               </button>
               {locOpen && (
-                <ul className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
+                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl dark:shadow-black/50 z-40 overflow-hidden py-1">
                   {["all", "oleh", "ozoro", "abraka"].map((loc) => (
                     <li
                       key={loc}
@@ -191,7 +200,11 @@ const HousePage = () => {
                         setLocation(loc);
                         setLocOpen(false);
                       }}
-                      className={`px-4 py-3 text-xs font-bold capitalize cursor-pointer transition-colors ${location === loc ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+                      className={`px-4 py-3 text-xs font-bold capitalize cursor-pointer transition-colors ${
+                        location === loc
+                          ? "bg-blue-600 text-white"
+                          : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"
+                      }`}
                     >
                       {loc}
                     </li>
@@ -200,28 +213,33 @@ const HousePage = () => {
               )}
             </div>
 
+            {/* Sort Dropdown */}
             <div className="relative" ref={sortRef}>
               <button
                 onClick={() => {
                   setSortOpen(!sortOpen);
                   setLocOpen(false);
                 }}
-                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white relative transition-all ${sortOpen ? "border-blue-500 ring-4 ring-blue-50" : "border-slate-200"}`}
+                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${
+                  sortOpen
+                    ? "border-blue-500 dark:border-blue-400 shadow-md dark:shadow-black/50"
+                    : "border-slate-200 dark:border-gray-600"
+                }`}
               >
                 <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">
                   Sort By
                 </span>
-                <span className="text-[11px] font-bold text-slate-800 truncate w-full pr-6 text-left">
+                <span className="text-[11px] font-bold truncate w-full pr-6 text-left">
                   {sort === "newest"
                     ? "Newest"
                     : sort === "price_low"
                       ? "Budget"
                       : "Luxury"}
                 </span>
-                <ChevronIcon isOpen={sortOpen} />
+                <ChevronIcon  isOpen={sortOpen} />
               </button>
               {sortOpen && (
-                <ul className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
+                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl dark:shadow-black/50 z-40 overflow-hidden py-1">
                   {[
                     { l: "Newest", v: "newest" },
                     { l: "Budget", v: "price_low" },
@@ -233,7 +251,11 @@ const HousePage = () => {
                         setSort(s.v);
                         setSortOpen(false);
                       }}
-                      className={`px-4 py-3 text-xs font-bold cursor-pointer transition-colors ${sort === s.v ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+                      className={`px-4 py-3 text-xs font-bold cursor-pointer transition-colors ${
+                        sort === s.v
+                          ? "bg-blue-600 text-white"
+                          : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"
+                      }`}
                     >
                       {s.l}
                     </li>
@@ -287,16 +309,16 @@ const HousePage = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2">
+              <h3 className="text-xl dark:text-white font-black text-slate-800 uppercase tracking-tight mb-2">
                 No houses found
               </h3>
-              <p className="text-slate-500 text-sm mb-8 max-w-xs">
+              <p className="text-slate-500 dark:text-white text-sm mb-8 max-w-xs">
                 We couldn't find anything matching "{activeSearch || location}".
                 Try adjusting your filters or search term.
               </p>
               <button
                 onClick={handleReset}
-                className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95"
+                className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg  active:scale-95"
               >
                 Clear All Filters
               </button>
@@ -305,29 +327,30 @@ const HousePage = () => {
         </div>
 
         {!loading && totalCount > 0 && (
-          <div className="mt-20 flex flex-col items-center gap-6">
-            <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">
-              Page <span className="text-blue-600">{currentPage}</span> of{" "}
-              {totalPages}
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 active:scale-95 transition-all shadow-sm"
-              >
-                Previous
-              </button>
-              <button
-                disabled={currentPage >= totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-                className="px-10 py-4 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-blue-100 disabled:opacity-30 active:scale-95 transition-all"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
+  <div className="mt-20 flex flex-col items-center gap-6">
+    <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-400">
+      Page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of{" "}
+      {totalPages}
+    </div>
+    <div className="flex items-center gap-4">
+      <button
+        disabled={currentPage === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        className="px-8 py-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 dark:text-white disabled:opacity-30 active:scale-95 transition-all"
+      >
+        Previous
+      </button>
+      <button
+        disabled={currentPage >= totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        className="px-10 py-4 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest disabled:opacity-30 active:scale-95 transition-all"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+)}
+
       </div>
     </section>
   );

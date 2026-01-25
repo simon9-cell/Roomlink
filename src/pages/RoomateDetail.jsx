@@ -6,7 +6,7 @@ import {
   HiOutlineLocationMarker,
   HiOutlineCash,
   HiOutlineShieldCheck,
-  HiOutlineUserGroup, 
+  HiOutlineUserGroup,
 } from "react-icons/hi";
 
 const RoomateDetail = () => {
@@ -28,7 +28,7 @@ const RoomateDetail = () => {
         if (error) throw error;
         setRoom(data);
 
-          // --- Dynamic Counter ---
+        // --- Dynamic Counter ---
         const viewKey = `viewed_roommate_${id}`;
         if (!sessionStorage.getItem(viewKey)) {
           const { error: rpcError } = await supabase.rpc(
@@ -41,7 +41,9 @@ const RoomateDetail = () => {
         }
 
         if (data.image_url) {
-          const images = Array.isArray(data.image_url) ? data.image_url : [data.image_url];
+          const images = Array.isArray(data.image_url)
+            ? data.image_url
+            : [data.image_url];
           setActiveImg(images[0]);
         }
       } catch (error) {
@@ -66,17 +68,25 @@ const RoomateDetail = () => {
       </div>
     );
 
-  const images = Array.isArray(room.image_url) ? room.image_url : [room.image_url];
+  const images = Array.isArray(room.image_url)
+    ? room.image_url
+    : [room.image_url];
 
   const generateLink = () => {
-    const rawNum = room.phone_number ? String(room.phone_number).replace(/\D/g, "") : "";
+    const rawNum = room.phone_number
+      ? String(room.phone_number).replace(/\D/g, "")
+      : "";
     if (rawNum.length < 10) return null;
-    let finalNum = rawNum.startsWith("0") ? "234" + rawNum.substring(1) : rawNum.startsWith("234") ? rawNum : "234" + rawNum;
+    let finalNum = rawNum.startsWith("0")
+      ? "234" + rawNum.substring(1)
+      : rawNum.startsWith("234")
+        ? rawNum
+        : "234" + rawNum;
 
     const message =
       `👋 *Roommate Inquiry: ${room.name}*\n\n` +
       `📍 *Location:* ${room.location}\n` +
-      `👤 *Preference:* ${room.gender_pref || 'Any'}\n` +
+      `👤 *Preference:* ${room.gender_pref || "Any"}\n` +
       `💰 *Budget:* ₦${Number(room.price).toLocaleString()}\n` +
       `🔗 *Link:* ${window.location.href}\n\n` +
       `Hi, I'm interested in this roommate listing. Is it still available?`;
@@ -87,10 +97,15 @@ const RoomateDetail = () => {
   const whatsappUrl = generateLink();
 
   // Helper for dynamic gender styling
-  const genderColor = room.gender_pref === 'Male' ? 'text-blue-600' : room.gender_pref === 'Female' ? 'text-pink-500' : 'text-slate-600';
+  const genderColor =
+    room.gender_pref === "Male"
+      ? "text-blue-600"
+      : room.gender_pref === "Female"
+        ? "text-pink-500"
+        : "text-slate-600";
 
   return (
-    <div className="max-w-6xl mx-auto pt-24 pb-20 px-6 bg-slate-50 min-h-screen overflow-hidden mb-5">
+    <div className="max-w-6xl dark:text-white dark:bg-gray-900 mx-auto pt-24 pb-20 px-6 bg-slate-50 min-h-screen overflow-hidden mb-5">
       <Link
         to="/rooms"
         className="text-blue-600 mb-6 inline-flex items-center gap-2 font-black uppercase text-xs tracking-widest hover:-translate-x-1 transition-transform"
@@ -116,10 +131,16 @@ const RoomateDetail = () => {
                   key={index}
                   onClick={() => setActiveImg(img)}
                   className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-4 transition-all ${
-                    activeImg === img ? "border-blue-600 scale-105" : "border-white"
+                    activeImg === img
+                      ? "border-blue-600 scale-105"
+                      : "border-white"
                   }`}
                 >
-                  <img src={img} className="w-full h-full object-cover" alt="thumb" />
+                  <img
+                    src={img}
+                    className="w-full h-full object-cover"
+                    alt="thumb"
+                  />
                 </button>
               ))}
             </div>
@@ -134,13 +155,19 @@ const RoomateDetail = () => {
                 <HiOutlineLocationMarker />
                 <span>{room.location}</span>
               </div>
-              
+
               <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-              
+
               {/* UPDATED GENDER PREFERENCE DISPLAY */}
-              <div className={`flex items-center gap-1.5 font-black text-[10px] uppercase tracking-wider ${genderColor}`}>
+              <div
+                className={`flex items-center gap-1.5 font-black text-[10px] uppercase tracking-wider ${genderColor}`}
+              >
                 <HiOutlineUserGroup />
-                <span>{room.gender_pref ? `${room.gender_pref} Roommate Needed` : 'Any Gender Needed'}</span>
+                <span>
+                  {room.gender_pref
+                    ? `${room.gender_pref} Roommate Needed`
+                    : "Any Gender Needed"}
+                </span>
               </div>
             </div>
 
@@ -151,54 +178,72 @@ const RoomateDetail = () => {
 
           <div className="bg-white p-6 rounded-3xl border border-slate-200 flex items-center justify-between shadow-sm">
             <div>
-              <p className="text-[10px] uppercase font-black text-slate-400">Budget Contribution</p>
+              <p className="text-[10px] uppercase font-black text-slate-400">
+                Budget Contribution
+              </p>
               <p className="text-3xl font-black text-slate-900">
-                ₦{Number(room.price).toLocaleString()}
+                ₦{Number(room.price).toLocaleString()}/year
               </p>
             </div>
             <div className="bg-blue-50 text-blue-600 p-3 rounded-2xl">
               <HiOutlineCash size={32} />
             </div>
           </div>
-           
-           {/* ---  VIEW COUNTER UI --- */}
-          <div className="flex items-center text-slate-500 gap-2 px-2 my-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
-            <span className="text-xs font-normal uppercase tracking-widest">
-              {room.views || 0} views
-            </span>
+
+          {/* --- UPDATED VIEW COUNTER UI --- */}
+          <div className="flex items-center">
+            <div className="flex items-center bg-slate-200/50 text-slate-500 gap-2 px-3 py-1.5 rounded-full border border-slate-100">
+              <svg
+                className="w-4 h-4 dark:text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <span className="text-[10px] dark:text-white font-black uppercase tracking-tighter">
+                {room.views || 0} Views
+              </span>
+            </div>
           </div>
-          <div className="bg-slate-100/50 p-6 rounded-3xl">
-            <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 ">Description</h3>
-            <p className="text-slate-600 leading-relaxed font-bold">
-              {room.description || "No description provided for this roommate listing."}
-            </p>
+
+          {/* --- UPDATED DESCRIPTION SECTION --- */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">
+              Description
+            </h3>
+            {/* Added max-height and overflow for very long text */}
+            <div className="max-h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+              <p className="text-slate-600 leading-relaxed text-sm font-medium whitespace-pre-line">
+                {room.description ||
+                  "The agent hasn't provided a description for this property yet."}
+              </p>
+            </div>
           </div>
 
           {/* SAFETY DISCLAIMER */}
           <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex gap-3">
-            <HiOutlineShieldCheck className="text-amber-600 shrink-0" size={20} />
+            <HiOutlineShieldCheck
+              className="text-amber-600 shrink-0"
+              size={20}
+            />
             <p className="text-[12px] text-amber-800 font-medium leading-tight">
-              <strong className="block uppercase text-[10px] tracking-widest mb-1">Safety Note:</strong>
-              Meet potential roommates in public places first. Verify credentials before making any payments.
+              <strong className="block uppercase text-[10px] tracking-widest mb-1">
+                Safety Note:
+              </strong>
+              Meet potential roommates in public places first. Verify
+              credentials before making any payments.
             </p>
           </div>
 
@@ -210,8 +255,19 @@ const RoomateDetail = () => {
                   href={`tel:${room.phone_number}`}
                   className="flex-1 flex items-center justify-center gap-3 bg-blue-600 text-white py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 hover:text-gray-300 transition-all"
                 >
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 01-7.143-7.143c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 01-7.143-7.143c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
+                    />
                   </svg>
                   Call Now
                 </a>
@@ -222,7 +278,7 @@ const RoomateDetail = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ backgroundColor: "#25D366" }}
-                    className="flex-[1.5] flex items-center justify-center gap-3 text-white py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-xl shadow-green-100 hover:brightness-110 active:scale-95 transition-all"
+                    className="flex-[1.5] flex items-center justify-center gap-3 text-white py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-xl  hover:brightness-110 active:scale-95 transition-all"
                   >
                     <HiOutlineChatAlt2 size={24} />
                     WhatsApp
