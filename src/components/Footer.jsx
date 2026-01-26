@@ -4,8 +4,8 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    // Only visible on large screens (lg), hidden on mobile/tablet
-    <footer className="hidden lg:flex w-full dark:text-white dark:bg-gray-900 bg-slate-100 backdrop-blur-md border-b border-slate-200 border-t  py-10 ">
+    
+    <footer className="hidden md:block lg:flex w-full dark:text-white dark:bg-gray-900 bg-slate-100 backdrop-blur-md border-b border-slate-200 border-t  py-10 ">
       <div className="max-w-[1240px] mx-auto px-6 w-full flex justify-between items-center">
         
         {/* Logo Section */}

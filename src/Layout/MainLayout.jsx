@@ -16,7 +16,7 @@ const MainLayout = () => {
       <Navbar />
       
       {/* pt-20 handles the fixed navbar height */}
-      <main className="flex-grow  dark:bg-slate-900 bg-slate-200">
+      <main className="flex-grow  dark:bg-slate-900 bg-slate-200 pt-10">
         <Outlet />
       </main>
 
