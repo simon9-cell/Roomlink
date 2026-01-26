@@ -104,27 +104,23 @@ const Homepage = () => {
         </button>
       </section>
 
-      {/* ---------------- CONTACT SECTION ---------------- */}
-      <section className="bg-white dark:bg-gray-800 py-14 text-center mt-20 px-6 rounded-xl shadow-md max-w-4xl mx-auto mb-10">
-        <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-          Get in Touch
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Have questions? Contact me directly!
-        </p>
-
-        {/* Small Contact Button */}
-        <div className="flex justify-center mb-10" >
-          <a
-            href="https://wa.me/2348142917397"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="dark:bg-white bg-blue-500 text-white  dark:text-blue-500 px-6 py-3 rounded-full text-sm font-bold hover:scale-105 transition-transform"
-          >
-            Contact Me
-          </a>
-        </div>
-      </section>
+      {/* ---------------- SMALL CONTACT BUTTON ---------------- */}
+      <a
+        href="https://wa.me/2348142917397"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        title="Contact me on WhatsApp"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="white"
+          className="w-7 h-7"
+        >
+          <path d="M20.52 3.48A11.88 11.88 0 0012 0C5.37 0 .01 5.37.01 12c0 2.12.55 4.1 1.6 5.86L0 24l6.3-1.62A11.93 11.93 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.48-8.52zM12 22a10 10 0 01-5.26-1.5l-.38-.23-3.74.96.99-3.64-.24-.37A10 10 0 1122 12c0 5.52-4.48 10-10 10zm5.36-7.64l-1.44-.67a.5.5 0 00-.53.09l-.7.68a8.1 8.1 0 01-3.72-3.72l.68-.7a.5.5 0 00.09-.53l-.67-1.44a.5.5 0 00-.5-.27 5.64 5.64 0 00-1.68.55 4.63 4.63 0 00-2.23 2.33 5.64 5.64 0 00.55 1.68.5.5 0 00.27.5l1.44.67a.5.5 0 00.53-.09l.7-.68a8.1 8.1 0 013.72 3.72l-.68.7a.5.5 0 00-.09.53l.67 1.44a.5.5 0 00.5.27 5.64 5.64 0 001.68-.55 4.63 4.63 0 002.23-2.33 5.64 5.64 0 00-.55-1.68.5.5 0 00-.27-.5z" />
+        </svg>
+      </a>
     </div>
   );
 };
