@@ -106,12 +106,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOutUser = async () => {
-    await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
 
-    setUser(null);
-    setSession(null);
-    setProfileName("");
-  };
+  if (error) throw error;
+
+  setUser(null);
+  setSession(null);
+  setProfileName("");
+};
+
 
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

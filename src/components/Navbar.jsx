@@ -51,7 +51,7 @@ const Navbar = () => {
             ) : (
               <NavLink
                 to="/signin" 
-                className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg border border-gray-50"
+                className="dark:bg-blue-900 border-slate-900 dark:text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-500 transition-all shadow-lg border text-slate-900"
               >
                 Log In
               </NavLink>

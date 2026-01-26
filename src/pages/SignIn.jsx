@@ -7,7 +7,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // ✅ Added
+  const [loading, setLoading] = useState(false);
 
   const { signInUser, session } = useAuth();
   const navigate = useNavigate();
@@ -25,26 +25,31 @@ const SignIn = () => {
     e.preventDefault();
 
     setError(null);
-    setLoading(true); // ✅ Start loading
+    setLoading(true);
 
-    const { error } = await signInUser(email, password);
+    try {
+      await signInUser(email, password);
+    } catch (err) {
+      console.error("Login error:", err);
 
-    if (error) {
-      if (error.message.toLowerCase().includes("email not confirmed")) {
+      const message = err?.message || "";
+
+      if (message.toLowerCase().includes("email not confirmed")) {
         setError("Please confirm your email before logging in.");
+      } else if (message.toLowerCase().includes("invalid login credentials")) {
+        setError("Incorrect email or password.");
       } else {
-        setError(error.message);
+        setError("Login failed. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false); // ✅ Stop loading
   };
 
   return (
     <div className="min-h-screen dark:text-white dark:bg-gray-900 w-full bg-[#F0F2F5] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-[360px] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-5 sm:p-7">
-
           <div className="text-center mb-5">
             <Link to="/" className="inline-block mb-1 hover:opacity-80">
               <h1 className="text-[#1877F2] tracking-tighter font-black text-xl uppercase italic leading-none">
@@ -57,7 +62,6 @@ const SignIn = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-
             <div>
               <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
                 Email
@@ -66,8 +70,11 @@ const SignIn = () => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading} // ✅ Disable while loading
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
+                disabled={loading}
                 className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm"
                 placeholder="name@email.com"
                 required
@@ -83,8 +90,11 @@ const SignIn = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading} // ✅ Disable while loading
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
+                  disabled={loading}
                   className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm"
                   placeholder="••••••••"
                   required
@@ -109,18 +119,18 @@ const SignIn = () => {
               </div>
             </div>
 
-            {/* ✅ Loading Button */}
             <button
               type="submit"
               disabled={loading}
               className={`w-full font-bold py-2.5 rounded-xl text-sm transition 
-              ${loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#1877F2] hover:bg-blue-600 text-white"}`}
+              ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#1877F2] hover:bg-blue-600 text-white"
+              }`}
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
-
           </form>
 
           {error && (
@@ -135,7 +145,6 @@ const SignIn = () => {
               Create Account
             </Link>
           </p>
-
         </div>
       </div>
     </div>

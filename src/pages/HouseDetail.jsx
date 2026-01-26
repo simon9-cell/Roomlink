@@ -55,7 +55,7 @@ const HouseDetail = () => {
     };
     fetchHouseDetail();
     console.log("Route ID:", id);
-    console.log("Converted ID:", Number(id));
+    
   }, [id]);
 
   if (loading)
