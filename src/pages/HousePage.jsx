@@ -59,7 +59,9 @@ const HousePage = () => {
       };
 
       const s = sortConfigs[sort] || sortConfigs.newest;
-      query = query.order(s.col, { ascending: s.asc });
+      query = query
+        .order(s.col, { ascending: s.asc })
+        .order("id", { ascending: false });
 
       // 5. Pagination Range
       query = query.range(from, to);
@@ -125,7 +127,7 @@ const HousePage = () => {
         viewBox="0 0 10 6"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-         className="dark:stroke-white  stroke-slate-600 "
+        className="dark:stroke-white  stroke-slate-600 "
       >
         <path
           d="M1 1L5 5L9 1"
@@ -133,7 +135,6 @@ const HousePage = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-         
         />
       </svg>
     </div>
@@ -175,7 +176,7 @@ const HousePage = () => {
               <button
                 onClick={() => {
                   setLocOpen(!locOpen);
-                  setSortOpen(false);       
+                  setSortOpen(false);
                 }}
                 className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${
                   locOpen
@@ -233,17 +234,17 @@ const HousePage = () => {
                   {sort === "newest"
                     ? "Newest"
                     : sort === "price_low"
-                      ? "Budget"
-                      : "Luxury"}
+                      ? "Low Price"
+                      : "High Price"}
                 </span>
-                <ChevronIcon  isOpen={sortOpen} />
+                <ChevronIcon isOpen={sortOpen} />
               </button>
               {sortOpen && (
                 <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl dark:shadow-black/50 z-40 overflow-hidden py-1">
                   {[
                     { l: "Newest", v: "newest" },
-                    { l: "Budget", v: "price_low" },
-                    { l: "Luxury", v: "price_high" },
+                    { l: "Low Price", v: "price_low" },
+                    { l: "High Price", v: "price_high" },
                   ].map((s) => (
                     <li
                       key={s.v}
@@ -327,30 +328,32 @@ const HousePage = () => {
         </div>
 
         {!loading && totalCount > 0 && (
-  <div className="mt-20 flex flex-col items-center gap-6">
-    <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-400">
-      Page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of{" "}
-      {totalPages}
-    </div>
-    <div className="flex items-center gap-4">
-      <button
-        disabled={currentPage === 1}
-        onClick={() => handlePageChange(currentPage - 1)}
-        className="px-8 py-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 dark:text-white disabled:opacity-30 active:scale-95 transition-all"
-      >
-        Previous
-      </button>
-      <button
-        disabled={currentPage >= totalPages}
-        onClick={() => handlePageChange(currentPage + 1)}
-        className="px-10 py-4 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest disabled:opacity-30 active:scale-95 transition-all"
-      >
-        Next
-      </button>
-    </div>
-  </div>
-)}
-
+          <div className="mt-20 flex flex-col items-center gap-6">
+            <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-400">
+              Page{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                {currentPage}
+              </span>{" "}
+              of {totalPages}
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-8 py-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 dark:text-white disabled:opacity-30 active:scale-95 transition-all"
+              >
+                Previous
+              </button>
+              <button
+                disabled={currentPage >= totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-10 py-4 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest disabled:opacity-30 active:scale-95 transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

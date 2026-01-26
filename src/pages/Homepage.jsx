@@ -14,7 +14,7 @@ const Homepage = () => {
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="bg-gradient-to-br from-[#1877F2] to-[#4da0f0] text-white py-20 px-6 text-center rounded-b-3xl mt-16 relative overflow-hidden">
         <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
-          Find Your Next Home or Roommate With{" "}
+          Find Your Next House or Roommate With{" "}
           <span className="italic uppercase tracking-tight">RoomLink</span>
         </h1>
         <p className="max-w-xl mx-auto text-lg opacity-90 mb-6">
@@ -109,7 +109,7 @@ const Homepage = () => {
         href="https://wa.me/2348142917397"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        className="fixed bottom-24 right-5 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
         title="Contact me on WhatsApp"
       >
         <svg

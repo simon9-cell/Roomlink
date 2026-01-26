@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
+
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -29,6 +31,7 @@ const SignIn = () => {
 
     try {
       await signInUser(email, password);
+       toast.success("Logged in successfully!");
     } catch (err) {
       console.error("Login error:", err);
 

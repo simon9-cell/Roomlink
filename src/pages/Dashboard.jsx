@@ -52,8 +52,8 @@ const Dashboard = () => {
 
       setMyListings(
         combined.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        )
+          (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        ),
       );
     } catch (error) {
       console.error("Fetch error:", error.message);
@@ -141,9 +141,9 @@ const Dashboard = () => {
             .upload(fileName, file);
           if (uploadError) throw uploadError;
 
-          const { data: { publicUrl } } = supabase.storage
-            .from("product_images")
-            .getPublicUrl(fileName);
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("product_images").getPublicUrl(fileName);
 
           imageUrls.push(publicUrl);
         }
@@ -162,7 +162,8 @@ const Dashboard = () => {
       if (formData.category === "roommate")
         submissionData.gender_pref = formData.gender_pref;
 
-      const targetTable = formData.category === "house" ? "houses" : "roommates";
+      const targetTable =
+        formData.category === "house" ? "houses" : "roommates";
 
       if (editingId) {
         const { error } = await supabase
@@ -172,8 +173,11 @@ const Dashboard = () => {
         if (error) throw error;
         toast.success("Listing updated successfully");
       } else {
-        if (files.length === 0) throw new Error("Please upload at least one photo");
-        const { error } = await supabase.from(targetTable).insert([submissionData]);
+        if (files.length === 0)
+          throw new Error("Please upload at least one photo");
+        const { error } = await supabase
+          .from(targetTable)
+          .insert([submissionData]);
         if (error) throw error;
         toast.success("Listing published successfully");
       }
@@ -277,7 +281,7 @@ const Dashboard = () => {
                           onClick={() =>
                             handleDelete(
                               item.id,
-                              item.type === "houses" ? "houses" : "roommates"
+                              item.type === "houses" ? "houses" : "roommates",
                             )
                           }
                           className="flex-1 bg-red-50 dark:bg-red-700 text-red-600 dark:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 dark:hover:bg-red-800 hover:text-white transition-all"
@@ -304,7 +308,9 @@ const Dashboard = () => {
               <div className="w-16 h-16 bg-[#1877F2]/10 rounded-full flex items-center justify-center text-3xl mb-4">
                 🏠
               </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Post a House</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Post a House
+              </h2>
               <p className="text-gray-400 text-sm mt-2 text-center">
                 Rent out apartments, flats, or shops.
               </p>
@@ -320,7 +326,9 @@ const Dashboard = () => {
               <div className="w-16 h-16   bg-[#1877F2]/10 rounded-full flex items-center justify-center text-3xl mb-4">
                 🤝
               </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Find a Roommate</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Find a Roommate
+              </h2>
               <p className="text-gray-400 text-sm mt-2 text-center">
                 Post bedspaces or shared rooms.
               </p>
@@ -386,7 +394,22 @@ const Dashboard = () => {
               }
               placeholder="Description"
               className="w-full bg-[#0b0e11] p-4 rounded-xl h-28 border border-white/5 text-white outline-none focus:border-[#1877F2]"
+              required
             />
+            {/* Gender Preference - only for roommates */}
+            {formData.category === "roommate" && (
+              <select
+                value={formData.gender_pref}
+                onChange={(e) =>
+                  setFormData({ ...formData, gender_pref: e.target.value })
+                }
+                className="w-full bg-[#0b0e11] p-4 rounded-xl border border-white/5 text-white outline-none focus:border-[#1877F2]"
+              >
+                <option value="Any">Any</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            )}
 
             <div className="p-6 border-2 border-dashed border-white/10 rounded-2xl text-center relative hover:bg-white/5 transition-all">
               <input
@@ -394,6 +417,7 @@ const Dashboard = () => {
                 multiple
                 onChange={(e) => setFiles(Array.from(e.target.files))}
                 className="absolute inset-0 opacity-0 cursor-pointer"
+                
               />
               <p className="text-xs font-bold text-gray-400">Upload Photos</p>
               {files.length > 0 && (
@@ -407,7 +431,11 @@ const Dashboard = () => {
               disabled={loading}
               className="w-full bg-[#1877F2] text-white font-black py-5 rounded-xl hover:brightness-110 transition-all uppercase tracking-widest text-xs shadow-xl shadow-blue-500/10"
             >
-              {loading ? "Publishing..." : editingId ? "Update Listing" : "Publish Ad"}
+              {loading
+                ? "Publishing..."
+                : editingId
+                  ? "Update Listing"
+                  : "Publish Ad"}
             </button>
           </form>
         </div>

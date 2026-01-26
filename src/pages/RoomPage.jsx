@@ -62,7 +62,9 @@ const RoomPage = () => {
         price_high: { col: "price", asc: false },
       };
       const s = sortConfigs[sort] || sortConfigs.newest;
-      query = query.order(s.col, { ascending: s.asc });
+      query = query
+        .order(s.col, { ascending: s.asc })
+        .order("id", { ascending: true });
 
       // 6. Pagination Range (This MUST be last)
       query = query.range(from, to);
@@ -76,7 +78,8 @@ const RoomPage = () => {
       console.error("Fetch Error:", err.message);
     } finally {
       // Small timeout for smooth UI transition
-      setTimeout(() => setLoading(false), 400);
+      setLoading(false);
+
     }
   }, [location, gender, sort, activeSearch, currentPage]);
 
@@ -154,7 +157,7 @@ const RoomPage = () => {
           >
             <input
               type="text"
-              placeholder="Search by name or keyword..."
+              placeholder="Search by name or location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1 bg-transparent p-2 text-sm outline-none text-slate-800 dark:text-white font-bold min-w-0 placeholder:text-slate-400 dark:placeholder:text-gray-400"
@@ -189,7 +192,7 @@ const RoomPage = () => {
                   Gender
                 </span>
 
-                <span className="text-[11px] font-bold truncate w-full pr-6 text-left">
+                <span className="text-[11px] text-black dark:text-white font-bold truncate w-full pr-6 text-left">
                   {gender === "all" ? "Any" : gender}
                 </span>
 
@@ -238,7 +241,7 @@ const RoomPage = () => {
                   Location
                 </span>
 
-                <span className="text-[11px] font-bold truncate w-full pr-6 text-left capitalize">
+                <span className="text-[11px] font-bold text-black dark:text-white truncate w-full pr-6 text-left capitalize">
                   {location}
                 </span>
 
@@ -287,12 +290,12 @@ const RoomPage = () => {
                   Sort By
                 </span>
 
-                <span className="text-[11px] font-bold truncate w-full pr-6 text-left">
+                <span className="text-[11px] font-bold text-black dark:text-white truncate w-full pr-6 text-left">
                   {sort === "newest"
                     ? "Newest"
                     : sort === "price_low"
-                      ? "Budget"
-                      : "Luxury"}
+                      ? "Low Price"
+                      : "High Price"}
                 </span>
 
                 <ChevronIcon isOpen={sortOpen} />
@@ -302,8 +305,8 @@ const RoomPage = () => {
                 <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl shadow-xl z-40 overflow-hidden py-1">
                   {[
                     { l: "Newest", v: "newest" },
-                    { l: "Budget", v: "price_low" },
-                    { l: "Luxury", v: "price_high" },
+                    { l: "Low Price", v: "price_low" },
+                    { l: "High Price", v: "price_high" },
                   ].map((s) => (
                     <li
                       key={s.v}
