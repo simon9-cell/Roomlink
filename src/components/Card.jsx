@@ -52,6 +52,7 @@ const Card = ({ room, linkpath }) => {
             <>
               <button
                 onClick={prevSlide}
+                aria-label="Previous slide"
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600 p-1.5 rounded-full shadow-md transition-opacity opacity-0 group-hover:opacity-100"
               >
                 <svg
@@ -66,6 +67,7 @@ const Card = ({ room, linkpath }) => {
 
               <button
                 onClick={nextSlide}
+                aria-label="Next slide"
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600 p-1.5 rounded-full shadow-md transition-opacity opacity-0 group-hover:opacity-100"
               >
                 <svg

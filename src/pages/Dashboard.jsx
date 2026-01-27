@@ -355,7 +355,7 @@ const Dashboard = () => {
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              placeholder="Title"
+              placeholder="Title e.g Bedsitter"
               className="w-full bg-[#0b0e11] p-4 rounded-xl border border-white/5 text-white outline-none focus:border-[#1877F2]"
               required
             />
@@ -374,7 +374,7 @@ const Dashboard = () => {
               onChange={(e) =>
                 setFormData({ ...formData, location: e.target.value })
               }
-              placeholder="Location"
+              placeholder="Location e.g oleh"
               className="w-full bg-[#0b0e11] p-4 rounded-xl border border-white/5 text-white outline-none focus:border-[#1877F2]"
               required
             />
@@ -392,23 +392,31 @@ const Dashboard = () => {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              placeholder="Description"
+              placeholder="Description "
               className="w-full bg-[#0b0e11] p-4 rounded-xl h-28 border border-white/5 text-white outline-none focus:border-[#1877F2]"
               required
             />
             {/* Gender Preference - only for roommates */}
             {formData.category === "roommate" && (
-              <select
-                value={formData.gender_pref}
-                onChange={(e) =>
-                  setFormData({ ...formData, gender_pref: e.target.value })
-                }
-                className="w-full bg-[#0b0e11] p-4 rounded-xl border border-white/5 text-white outline-none focus:border-[#1877F2]"
-              >
-                <option value="Any">Any</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="gender_pref"
+                  className="text-sm font-medium text-gray-400 ml-1"
+                >
+                  Gender Preference
+                </label>
+                <select
+                  value={formData.gender_pref}
+                  onChange={(e) =>
+                    setFormData({ ...formData, gender_pref: e.target.value })
+                  }
+                  className="w-full bg-[#0b0e11] p-4 rounded-xl border border-white/5 text-white outline-none focus:border-[#1877F2]"
+                >
+                  <option value="Any">Any</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
             )}
 
             <div className="p-6 border-2 border-dashed border-white/10 rounded-2xl text-center relative hover:bg-white/5 transition-all">
@@ -417,7 +425,6 @@ const Dashboard = () => {
                 multiple
                 onChange={(e) => setFiles(Array.from(e.target.files))}
                 className="absolute inset-0 opacity-0 cursor-pointer"
-                
               />
               <p className="text-xs font-bold text-gray-400">Upload Photos</p>
               {files.length > 0 && (

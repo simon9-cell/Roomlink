@@ -54,7 +54,7 @@ const HouseDetail = () => {
       }
     };
     fetchHouseDetail();
-    console.log("Route ID:", id);
+    
     
   }, [id]);
 
