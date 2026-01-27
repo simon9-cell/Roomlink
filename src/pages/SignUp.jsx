@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -103,6 +105,7 @@ const SignUp = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    placeholder="Nwabueze Simon"
                     disabled={loading}
                     required
                     className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm disabled:opacity-60"
@@ -119,23 +122,38 @@ const SignUp = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                     required
+                    placeholder="anySimon@gmail.com"
                     className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm disabled:opacity-60"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
-                    Password
-                  </label>
+               <div>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Password</label>
+                {/* 3. Wrap in relative container */}
+                <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={loading}
+                    placeholder="••••••••"
                     required
-                    className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm disabled:opacity-60"
+                    className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
+                  {/* 4. The Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1877F2] transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} strokeWidth={2.5} />
+                    ) : (
+                      <Eye size={18} strokeWidth={2.5} />
+                    )}
+                  </button>
                 </div>
+              </div>
 
                 {/* -------- BUTTON WITH SPINNER -------- */}
                 <button
