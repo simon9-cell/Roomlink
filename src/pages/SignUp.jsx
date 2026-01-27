@@ -141,8 +141,8 @@ const SignUp = () => {
                     className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   {/* 4. The Toggle Button */}
-                  <button
-                    type="button"
+                  <span
+                    
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1877F2] transition-colors"
                   >
@@ -151,7 +151,7 @@ const SignUp = () => {
                     ) : (
                       <Eye size={18} strokeWidth={2.5} />
                     )}
-                  </button>
+                  </span>
                 </div>
               </div>
 
