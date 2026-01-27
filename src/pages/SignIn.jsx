@@ -15,6 +15,10 @@ const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+  document.title = "Login | RoomLink";
+}, []);
+
   const from = location.state?.from?.pathname || "/dashboard";
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -12,6 +12,9 @@ const SignUp = () => {
 
   const { signUpNewUser } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+  document.title = "SignUp | RoomLink";
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient"; 
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,10 @@ const UpdatePassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+  document.title = "UpdatePassword | RoomLink";
+}, []);
 
   const handleUpdate = async (e) => {
     e.preventDefault();

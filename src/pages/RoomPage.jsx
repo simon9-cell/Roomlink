@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../supabaseClient";
-import { Link } from "react-router-dom";
 import Card from "../components/Card";
 
 const RoomPage = () => {
@@ -11,6 +10,10 @@ const RoomPage = () => {
   const [sort, setSort] = useState("newest");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Find Roommates & Bedspaces | RoomLink";
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);

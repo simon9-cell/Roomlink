@@ -1,7 +1,11 @@
-
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const NotFound = () => {
+
+  useEffect(()=> {
+    document.title = "Page Not Found | Roomlink"
+  }, [])
   return (
     <div className="min-h-screen dark:text-white dark:bg-gray-900 bg-[#F0F2F5] flex flex-col items-center justify-center p-6 text-center">
       <h1 className="text-9xl font-black text-blue-600/20 tracking-tighter">404</h1>

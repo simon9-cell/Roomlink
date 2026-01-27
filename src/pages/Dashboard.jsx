@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const { user, session, signOutUser, userName, loadingSession } = useAuth();
+  const { session, signOutUser, userName } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "My Dashboard | RoomLink";
+  }, []);
 
   const [view, setView] = useState("menu");
   const [loading, setLoading] = useState(false);

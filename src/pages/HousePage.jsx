@@ -10,6 +10,10 @@ const HousePage = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    document.title = "Browse Houses | RoomLink";
+  }, []);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 8;

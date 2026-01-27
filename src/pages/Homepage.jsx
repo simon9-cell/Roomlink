@@ -1,9 +1,13 @@
 import React from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Accordion from "../components/Accordions";
 import Navbar from "../components/Navbar";
 
 const Homepage = () => {
+  useEffect(() => {
+    document.title = "RoomLink | Find Houses & Roommates in Nigeria";
+  }, []);
   const navigate = useNavigate();
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,6 +8,10 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const { resetPassword } = useAuth();
+
+  useEffect(() => {
+  document.title = "ForgotPassword | RoomLink";
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

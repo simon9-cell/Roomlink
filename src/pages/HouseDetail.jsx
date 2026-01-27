@@ -14,8 +14,21 @@ const HouseDetail = () => {
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState("");
 
+  
+useEffect(() => {
+  if (house && house.name) {
+    document.title = `${house.name} | RoomLink`;
+  } else if (loading) {
+    document.title = "Loading... | RoomLink";
+  }
+
+  // Reset title when the user leaves the page
+  return () => {
+    document.title = "RoomLink";
+  };
+}, [house, loading]); 
+
   useEffect(() => {
-    console.log("Fetching house with ID:", id);
     const fetchHouseDetail = async () => {
       setLoading(true);
       try {

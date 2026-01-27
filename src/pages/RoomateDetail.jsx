@@ -15,6 +15,20 @@ const RoomateDetail = () => {
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState("");
 
+    
+useEffect(() => {
+  if (room && room.name) {
+    document.title = `${room.name} | RoomLink`;
+  } else if (loading) {
+    document.title = "Loading... | RoomLink";
+  }
+
+  // Reset title when the user leaves the page
+  return () => {
+    document.title = "RoomLink";
+  };
+}, [room, loading]); 
+
   useEffect(() => {
     const fetchRoomDetail = async () => {
       setLoading(true);
