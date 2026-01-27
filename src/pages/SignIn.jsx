@@ -108,8 +108,8 @@ const SignIn = () => {
                   required
                 />
 
-                <button
-                  type="button"
+                <span
+                  
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1877F2] transition-colors"
                 >
@@ -118,7 +118,7 @@ const SignIn = () => {
                   ) : (
                     <Eye size={18} strokeWidth={2.5} />
                   )}
-                </button>
+                </span>
               </div>
 
               <div className="flex justify-end mt-1 px-1">
