@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 
 const SignIn = () => {
@@ -110,9 +111,13 @@ const SignIn = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1877F2] transition-colors"
                 >
-                  👁
+                  {showPassword ? (
+                    <EyeOff size={18} strokeWidth={2.5} />
+                  ) : (
+                    <Eye size={18} strokeWidth={2.5} />
+                  )}
                 </button>
               </div>
 
