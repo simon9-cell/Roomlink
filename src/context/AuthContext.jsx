@@ -63,22 +63,22 @@ export const AuthProvider = ({ children }) => {
 
     restoreSession();
 
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((event, currentSession) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      const currentUser = currentSession?.user ?? null;
 
-        const currentUser = currentSession?.user ?? null;
+      setSession(currentSession);
+      setUser(currentUser);
 
-        setSession(currentSession);
-        setUser(currentUser);
+      if (event === "SIGNED_IN" && currentUser) {
+        ensureProfile(currentUser);
+      }
 
-        if (event === "SIGNED_IN" && currentUser) {
-          ensureProfile(currentUser);
-        }
-
-        if (event === "SIGNED_OUT") {
-          setProfileName("");
-        }
-      });
+      if (event === "SIGNED_OUT") {
+        setProfileName("");
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -90,7 +90,11 @@ export const AuthProvider = ({ children }) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: name } },
+      options: {
+        data: { full_name: name },
+        // This ensures the link in the email takes them back to your site
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
     });
 
     if (error) throw error;
@@ -98,23 +102,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signInUser = async (email, password) => {
-    const { data, error } =
-      await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) throw error;
     return data;
   };
 
   const signOutUser = async () => {
-  const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
-  if (error) throw error;
+    if (error) throw error;
 
-  setUser(null);
-  setSession(null);
-  setProfileName("");
-};
-
+    setUser(null);
+    setSession(null);
+    setProfileName("");
+  };
 
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
