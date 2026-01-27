@@ -122,7 +122,7 @@ const SignUp = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                     required
-                    placeholder="anySimon@gmail.com"
+                    placeholder="anysimon@gmail.com"
                     className="w-full text-slate-700 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm disabled:opacity-60"
                   />
                 </div>
