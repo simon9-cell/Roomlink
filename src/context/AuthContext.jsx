@@ -68,14 +68,18 @@ export const AuthProvider = ({ children }) => {
     } = supabase.auth.onAuthStateChange((event, currentSession) => {
       const currentUser = currentSession?.user ?? null;
 
-      setSession(currentSession);
-      setUser(currentUser);
+      // ONLY set the session/user if the email is confirmed
+      if (currentUser && currentUser.email_confirmed_at) {
+        setSession(currentSession);
+        setUser(currentUser);
 
-      if (event === "SIGNED_IN" && currentUser) {
-        ensureProfile(currentUser);
-      }
-
-      if (event === "SIGNED_OUT") {
+        if (event === "SIGNED_IN") {
+          ensureProfile(currentUser);
+        }
+      } else {
+        // If not confirmed, keep them logged out in the app's eyes
+        setSession(null);
+        setUser(null);
         setProfileName("");
       }
     });
