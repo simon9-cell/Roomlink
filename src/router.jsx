@@ -11,6 +11,7 @@ import PrivateRoutes from "./components/PrivateRoutes";
 import RoomateDetail from "./pages/RoomateDetail";
 import ForgotPassword from "./pages/ForgotPassword";
 import UpdatePassword from "./pages/UpdatePassword";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "rooms/:id", element: <RoomateDetail /> },
       { path: "signin", element: <Signin /> },
       { path: "signup", element: <SignUp /> },
+      { path: "settings", element: <Settings /> },
       { path: "forgot-password", element: <ForgotPassword /> },
       { path: "update-password", element: <UpdatePassword /> },
       
