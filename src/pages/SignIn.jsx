@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 
-
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,13 +16,14 @@ const SignIn = () => {
   const location = useLocation();
 
   useEffect(() => {
-  document.title = "Login | RoomLink";
-}, []);
+    document.title = "Login | RoomLink";
+  }, []);
 
   const from = location.state?.from?.pathname || "/dashboard";
 
   useEffect(() => {
-    if (session) {
+    // Only redirect to dashboard if a session exists AND the email is confirmed
+    if (session && session.user?.email_confirmed_at) {
       navigate(from, { replace: true });
     }
   }, [session, navigate, from]);
@@ -36,7 +36,7 @@ const SignIn = () => {
 
     try {
       await signInUser(email, password);
-       toast.success("Logged in successfully!");
+      toast.success("Logged in successfully!");
     } catch (err) {
       console.error("Login error:", err);
 
@@ -64,9 +64,7 @@ const SignIn = () => {
                 Room<span className="text-slate-900">Link</span>
               </h1>
             </Link>
-            <h2 className="text-lg font-bold text-gray-800">
-              Welcome Back
-            </h2>
+            <h2 className="text-lg font-bold text-gray-800">Welcome Back</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -109,7 +107,6 @@ const SignIn = () => {
                 />
 
                 <span
-                  
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1877F2] transition-colors"
                 >

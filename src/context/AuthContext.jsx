@@ -51,11 +51,15 @@ export const AuthProvider = ({ children }) => {
       const currentSession = data?.session ?? null;
       const currentUser = currentSession?.user ?? null;
 
-      setSession(currentSession);
-      setUser(currentUser);
-
-      if (currentUser) {
-        ensureProfile(currentUser); // do NOT await
+      // CHANGE THIS: Only set state if email is confirmed
+      if (currentUser && currentUser.email_confirmed_at) {
+        setSession(currentSession);
+        setUser(currentUser);
+        ensureProfile(currentUser);
+      } else {
+        // If not confirmed, ensure state is clean
+        setSession(null);
+        setUser(null);
       }
 
       setLoadingSession(false);
