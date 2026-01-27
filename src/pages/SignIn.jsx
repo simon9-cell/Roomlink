@@ -22,8 +22,8 @@ const SignIn = () => {
   const from = location.state?.from?.pathname || "/dashboard";
 
   useEffect(() => {
-    // Only redirect to dashboard if a session exists AND the email is confirmed
-    if (session && session.user?.email_confirmed_at) {
+    // If confirmation is OFF, session is enough to redirect
+    if (session) {
       navigate(from, { replace: true });
     }
   }, [session, navigate, from]);

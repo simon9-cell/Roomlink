@@ -44,46 +44,36 @@ export const AuthProvider = ({ children }) => {
   // ======================
   // SESSION RESTORE
   // ======================
-  useEffect(() => {
+     useEffect(() => {
     const restoreSession = async () => {
       const { data } = await supabase.auth.getSession();
-
       const currentSession = data?.session ?? null;
       const currentUser = currentSession?.user ?? null;
 
-      // CHANGE THIS: Only set state if email is confirmed
-      if (currentUser && currentUser.email_confirmed_at) {
-        setSession(currentSession);
-        setUser(currentUser);
-        ensureProfile(currentUser);
-      } else {
-        // If not confirmed, ensure state is clean
-        setSession(null);
-        setUser(null);
-      }
+      // REMOVED the email_confirmed_at check
+      setSession(currentSession);
+      setUser(currentUser);
 
+      if (currentUser) {
+        ensureProfile(currentUser);
+      }
       setLoadingSession(false);
     };
 
     restoreSession();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
       const currentUser = currentSession?.user ?? null;
 
-      // ONLY set the session/user if the email is confirmed
-      if (currentUser && currentUser.email_confirmed_at) {
-        setSession(currentSession);
-        setUser(currentUser);
+      // Simplified: If there is a session, the user is logged in
+      setSession(currentSession);
+      setUser(currentUser);
 
-        if (event === "SIGNED_IN") {
-          ensureProfile(currentUser);
-        }
-      } else {
-        // If not confirmed, keep them logged out in the app's eyes
-        setSession(null);
-        setUser(null);
+      if (event === "SIGNED_IN" && currentUser) {
+        ensureProfile(currentUser);
+      }
+      
+      if (event === "SIGNED_OUT") {
         setProfileName("");
       }
     });
