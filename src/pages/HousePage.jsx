@@ -7,6 +7,7 @@ const HousePage = () => {
   const [search, setSearch] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [sort, setSort] = useState("newest");
+  const [hasFetched, setHasFetched] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,8 +26,7 @@ const HousePage = () => {
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
-    // FIX 1: Clear current rooms so skeletons show immediately
-    setRooms([]);
+     setRooms([])
 
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
@@ -64,6 +64,7 @@ const HousePage = () => {
 
       setRooms(data || []);
       setTotalCount(count ?? 0);
+      setHasFetched(true)
     } catch (err) {
       console.error("Fetch Error:", err.message);
     } finally {
@@ -237,7 +238,7 @@ const HousePage = () => {
       <div className="max-w-7xl mx-auto p-6 mt-12 pb-24">
         <div className="flex flex-wrap justify-center gap-8">
           {loading ? (
-            [...Array(4)].map((_, i) => (
+            [...Array(8)].map((_, i) => (
               <div
                 key={i}
                 className="w-full max-w-sm bg-white rounded-[2.5rem] p-4 shadow-sm border border-slate-100 animate-pulse"
@@ -257,7 +258,7 @@ const HousePage = () => {
                   </div>
                 ),
             )
-          ) : !loading ? (
+          ) : !loading && hasFetched ? (
             // FIX 2: Added !loading check so this doesn't flicker while fetching
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center w-full">
               <div className="bg-slate-200/50 p-6 rounded-full mb-6">

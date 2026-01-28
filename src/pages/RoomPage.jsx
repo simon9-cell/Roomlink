@@ -8,8 +8,9 @@ const RoomPage = () => {
   const [search, setSearch] = useState("");
   const [activeSearch, setActiveSearch] = useState(""); 
   const [sort, setSort] = useState("newest");
+  const [hasFetched, setHasFetched] = useState(false);
   const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 8;
@@ -28,8 +29,7 @@ const RoomPage = () => {
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
-    // CRITICAL FIX: Clear rooms immediately so skeletons show instead of "No Matches"
-    setRooms([]); 
+    setRooms([])
     
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
@@ -63,10 +63,12 @@ const RoomPage = () => {
         .range(from, to);
 
       const { data, error, count } = await query;
+      console.log(data)
       if (error) throw error;
 
       setRooms(data || []);
       setTotalCount(count || 0);
+      setHasFetched(true);
     } catch (err) {
       console.error("Fetch Error:", err.message);
     } finally {
@@ -206,7 +208,7 @@ const RoomPage = () => {
       <div className="max-w-7xl mx-auto p-6 mt-12 pb-24">
         <div className="flex flex-wrap justify-center gap-8">
           {loading ? (
-            [...Array(4)].map((_, i) => (
+            [...Array(8)].map((_, i) => (
               <div key={i} className="w-full max-w-sm bg-white rounded-[2.5rem] p-4 shadow-sm border border-slate-100 animate-pulse">
                 <div className="w-full h-64 bg-slate-200 rounded-[2rem] mb-4"></div>
               </div>
@@ -217,7 +219,7 @@ const RoomPage = () => {
                 <Card room={room} linkpath={`/rooms/${room.id}`} />
               </div>
             ))
-          ) : !loading ? (
+          ) : !loading && hasFetched ? (
             /* CRITICAL FIX: Only show this if NOT loading */
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
               <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
