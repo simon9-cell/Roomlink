@@ -9,11 +9,6 @@ const HousePage = () => {
   const [sort, setSort] = useState("newest");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    document.title = "Browse Houses | RoomLink";
-  }, []);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 8;
@@ -24,38 +19,34 @@ const HousePage = () => {
   const locRef = useRef(null);
   const sortRef = useRef(null);
 
+  useEffect(() => {
+    document.title = "Browse Houses | RoomLink";
+  }, []);
+
   const fetchRooms = useCallback(async () => {
     setLoading(true);
+    // FIX 1: Clear current rooms so skeletons show immediately
+    setRooms([]);
 
-    // Calculate pagination range
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
     try {
-      // 1. Initialize the query
       let query = supabase.from("houses").select("*", { count: "exact" });
 
-      // 2. Location Filter - Only filter if it's NOT "all"
       if (location !== "all") {
-        // Use wildcards % so "oleh" matches "Oleh, Delta"
         query = query.ilike("location", `%${location}%`);
       }
 
-      // 3. Smart Search Filter
       if (activeSearch.trim()) {
         const term = `%${activeSearch.trim()}%`;
-
-        // If we already have a location, we just search the name
-        // to keep the results relevant to that city
         if (location !== "all") {
           query = query.ilike("name", term);
         } else {
-          // If no location is set, search both
           query = query.or(`name.ilike.${term},location.ilike.${term}`);
         }
       }
 
-      // 4. Sorting Logic
       const sortConfigs = {
         newest: { col: "created_at", asc: false },
         price_low: { col: "price", asc: true },
@@ -65,14 +56,10 @@ const HousePage = () => {
       const s = sortConfigs[sort] || sortConfigs.newest;
       query = query
         .order(s.col, { ascending: s.asc })
-        .order("id", { ascending: false });
+        .order("id", { ascending: false })
+        .range(from, to);
 
-      // 5. Pagination Range
-      query = query.range(from, to);
-
-      // 6. Execute Request
       const { data, error, count } = await query;
-
       if (error) throw error;
 
       setRooms(data || []);
@@ -101,7 +88,6 @@ const HousePage = () => {
       if (sortRef.current && !sortRef.current.contains(event.target))
         setSortOpen(false);
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -121,17 +107,14 @@ const HousePage = () => {
 
   const ChevronIcon = ({ isOpen }) => (
     <div
-      className={`absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200 ${
-        isOpen ? "rotate-180" : ""
-      }`}
+      className={`absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
     >
       <svg
         width="10"
         height="6"
         viewBox="0 0 10 6"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="dark:stroke-white  stroke-slate-600 "
+        className="dark:stroke-white stroke-slate-600"
       >
         <path
           d="M1 1L5 5L9 1"
@@ -146,10 +129,8 @@ const HousePage = () => {
 
   return (
     <section className="bg-slate-200 max-md:mb-10 dark:text-white dark:bg-gray-900 min-h-screen font-sans overflow-x-hidden pt-6">
-      {/* FILTER HEADER */}
       <div className="bg-slate-200 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700 px-4 py-6 shadow-sm sticky top-16 z-30 ">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
-          {/* Search Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -173,31 +154,25 @@ const HousePage = () => {
             </button>
           </form>
 
-          {/* Filters Grid */}
           <div className="grid grid-cols-2 gap-2 w-full">
-            {/* Location Dropdown */}
             <div className="relative" ref={locRef}>
               <button
                 onClick={() => {
                   setLocOpen(!locOpen);
                   setSortOpen(false);
                 }}
-                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${
-                  locOpen
-                    ? "border-blue-500 dark:border-blue-400 shadow-md dark:shadow-black/50"
-                    : "border-slate-200 dark:border-gray-600"
-                }`}
+                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${locOpen ? "border-blue-500 dark:border-blue-400 shadow-md" : "border-slate-200 dark:border-gray-600"}`}
               >
                 <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">
                   Location
                 </span>
-                <span className="text-[11px] font-bold truncate w-full pr-6 text-left">
+                <span className="text-[11px] font-bold truncate w-full pr-6 text-left capitalize">
                   {location}
                 </span>
                 <ChevronIcon isOpen={locOpen} />
               </button>
               {locOpen && (
-                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl dark:shadow-black/50 z-40 overflow-hidden py-1">
+                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
                   {["all", "oleh", "ozoro", "abraka"].map((loc) => (
                     <li
                       key={loc}
@@ -205,11 +180,7 @@ const HousePage = () => {
                         setLocation(loc);
                         setLocOpen(false);
                       }}
-                      className={`px-4 py-3 text-xs font-bold capitalize cursor-pointer transition-colors ${
-                        location === loc
-                          ? "bg-blue-600 text-white"
-                          : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"
-                      }`}
+                      className={`px-4 py-3 text-xs font-bold capitalize cursor-pointer transition-colors ${location === loc ? "bg-blue-600 text-white" : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"}`}
                     >
                       {loc}
                     </li>
@@ -218,18 +189,13 @@ const HousePage = () => {
               )}
             </div>
 
-            {/* Sort Dropdown */}
             <div className="relative" ref={sortRef}>
               <button
                 onClick={() => {
                   setSortOpen(!sortOpen);
                   setLocOpen(false);
                 }}
-                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${
-                  sortOpen
-                    ? "border-blue-500 dark:border-blue-400 shadow-md dark:shadow-black/50"
-                    : "border-slate-200 dark:border-gray-600"
-                }`}
+                className={`w-full flex flex-col items-start border rounded-2xl px-3 py-2 bg-white dark:bg-gray-700 text-slate-800 dark:text-gray-100 relative transition-all ${sortOpen ? "border-blue-500 dark:border-blue-400 shadow-md" : "border-slate-200 dark:border-gray-600"}`}
               >
                 <span className="text-[8px] text-blue-600 font-black uppercase tracking-tighter">
                   Sort By
@@ -244,7 +210,7 @@ const HousePage = () => {
                 <ChevronIcon isOpen={sortOpen} />
               </button>
               {sortOpen && (
-                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl dark:shadow-black/50 z-40 overflow-hidden py-1">
+                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-2xl shadow-2xl z-40 overflow-hidden py-1">
                   {[
                     { l: "Newest", v: "newest" },
                     { l: "Low Price", v: "price_low" },
@@ -256,11 +222,7 @@ const HousePage = () => {
                         setSort(s.v);
                         setSortOpen(false);
                       }}
-                      className={`px-4 py-3 text-xs font-bold cursor-pointer transition-colors ${
-                        sort === s.v
-                          ? "bg-blue-600 text-white"
-                          : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"
-                      }`}
+                      className={`px-4 py-3 text-xs font-bold cursor-pointer transition-colors ${sort === s.v ? "bg-blue-600 text-white" : "text-slate-600 dark:text-gray-100 hover:bg-slate-50 dark:hover:bg-gray-600"}`}
                     >
                       {s.l}
                     </li>
@@ -272,7 +234,6 @@ const HousePage = () => {
         </div>
       </div>
 
-      {/* CONTENT AREA */}
       <div className="max-w-7xl mx-auto p-6 mt-12 pb-24">
         <div className="flex flex-wrap justify-center gap-8">
           {loading ? (
@@ -296,8 +257,8 @@ const HousePage = () => {
                   </div>
                 ),
             )
-          ) : (
-            // Replace your "No houses found" div with this:
+          ) : !loading ? (
+            // FIX 2: Added !loading check so this doesn't flicker while fetching
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center w-full">
               <div className="bg-slate-200/50 p-6 rounded-full mb-6">
                 <svg
@@ -319,32 +280,28 @@ const HousePage = () => {
               </h3>
               <p className="text-slate-500 dark:text-white text-sm mb-8 max-w-xs">
                 We couldn't find anything matching "{activeSearch || location}".
-                Try adjusting your filters or search term.
               </p>
               <button
                 onClick={handleReset}
-                className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg  active:scale-95"
+                className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg active:scale-95"
               >
                 Clear All Filters
               </button>
             </div>
-          )}
+          ) : null}
         </div>
 
         {!loading && totalCount > 0 && (
           <div className="mt-20 flex flex-col items-center gap-6">
-            <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-400">
-              Page{" "}
-              <span className="text-blue-600 dark:text-blue-400">
-                {currentPage}
-              </span>{" "}
-              of {totalPages}
+            <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">
+              Page <span className="text-blue-600">{currentPage}</span> of{" "}
+              {totalPages}
             </div>
             <div className="flex items-center gap-4">
               <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="px-8 py-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 dark:text-white disabled:opacity-30 active:scale-95 transition-all"
+                className="px-8 py-4 bg-white dark:bg-gray-800 border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 dark:text-white disabled:opacity-30 active:scale-95 transition-all"
               >
                 Previous
               </button>
