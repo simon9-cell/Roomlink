@@ -7,17 +7,18 @@ import LoadingSpinner from '../components/LoadingSpinner'; // 2. Import Spinner
 
 const MainLayout = () => {
   const { pathname } = useLocation();
-  const { loadingSession } = useAuth(); // 3. Get loading state
+  const { loadingSession } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  // 4. Check if we are on a page that shouldn't be blocked by a spinner
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  // 1. Define only the strictly private area
+  const isDashboard = pathname.startsWith("/dashboard");
 
-  // 5. If loading AND NOT an auth page, show spinner
-  if (loadingSession && !isAuthPage) {
+  // 2. Only block the user if they are going to the Dashboard
+  // This removes the "Securing Session" screen from 99% of your site.
+  if (loadingSession && isDashboard) {
     return <LoadingSpinner />;
   }
 
