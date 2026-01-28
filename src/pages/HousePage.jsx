@@ -35,22 +35,22 @@ const HousePage = () => {
       // 1. Initialize the query
       let query = supabase.from("houses").select("*", { count: "exact" });
 
-      // 2. Location Filter (Case-insensitive)
+      // 2. Location Filter - Only filter if it's NOT "all"
       if (location !== "all") {
-        // Use ilike to ensure "oleh" matches "Oleh" or "OLEH"
-        query = query.ilike("location", location);
+        // Use wildcards % so "oleh" matches "Oleh, Delta"
+        query = query.ilike("location", `%${location}%`);
       }
 
       // 3. Smart Search Filter
       if (activeSearch.trim()) {
         const term = `%${activeSearch.trim()}%`;
 
+        // If we already have a location, we just search the name
+        // to keep the results relevant to that city
         if (location !== "all") {
-          // If location is already picked, only search the NAME
-          // This prevents searching 'Oleh' in name and 'Oleh' in location from clashing
           query = query.ilike("name", term);
         } else {
-          // If no location is picked, search both name and location
+          // If no location is set, search both
           query = query.or(`name.ilike.${term},location.ilike.${term}`);
         }
       }

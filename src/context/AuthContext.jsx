@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   // ======================
   // SESSION RESTORE
   // ======================
-     useEffect(() => {
+  useEffect(() => {
     const restoreSession = async () => {
       const { data } = await supabase.auth.getSession();
       const currentSession = data?.session ?? null;
@@ -62,20 +62,24 @@ export const AuthProvider = ({ children }) => {
 
     restoreSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+    // ... inside your onAuthStateChange listener ...
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
       const currentUser = currentSession?.user ?? null;
 
-      // Simplified: If there is a session, the user is logged in
       setSession(currentSession);
       setUser(currentUser);
 
       if (event === "SIGNED_IN" && currentUser) {
         ensureProfile(currentUser);
       }
-      
+
       if (event === "SIGNED_OUT") {
         setProfileName("");
       }
+
+      setLoadingSession(false);
     });
 
     return () => subscription.unsubscribe();

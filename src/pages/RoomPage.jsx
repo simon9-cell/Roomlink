@@ -33,44 +33,36 @@ const RoomPage = () => {
     const to = from + ITEMS_PER_PAGE - 1;
 
     try {
-      // 1. Initialize Query
       let query = supabase.from("roommates").select("*", { count: "exact" });
 
-      // 2. Location Filter (Case-insensitive)
+      // Location Filter
       if (location !== "all") {
-        query = query.ilike("location", location);
+        query = query.ilike("location", `%${location}%`);
       }
 
-      // 3. Gender Filter
+      // Gender Filter
       if (gender !== "all") {
         query = query.eq("gender_pref", gender);
       }
 
-      // 4. Smart Search Filter
+      // Search Filter
       if (activeSearch.trim()) {
         const term = `%${activeSearch.trim()}%`;
-        if (location !== "all") {
-          // If location is already set, search only the name
-          query = query.ilike("name", term);
-        } else {
-          // Otherwise search both name and location
-          query = query.or(`name.ilike.${term},location.ilike.${term}`);
-        }
+        query = query.or(`name.ilike.${term},location.ilike.${term}`);
       }
 
-      // 5. Sorting Logic
+      // Sorting
       const sortConfigs = {
         newest: { col: "created_at", asc: false },
         price_low: { col: "price", asc: true },
         price_high: { col: "price", asc: false },
       };
       const s = sortConfigs[sort] || sortConfigs.newest;
+
       query = query
         .order(s.col, { ascending: s.asc })
-        .order("id", { ascending: true });
-
-      // 6. Pagination Range (This MUST be last)
-      query = query.range(from, to);
+        .order("id", { ascending: false }) // Secondary sort
+        .range(from, to);
 
       const { data, error, count } = await query;
       if (error) throw error;
@@ -80,12 +72,9 @@ const RoomPage = () => {
     } catch (err) {
       console.error("Fetch Error:", err.message);
     } finally {
-      // Small timeout for smooth UI transition
       setLoading(false);
-
     }
   }, [location, gender, sort, activeSearch, currentPage]);
-
   useEffect(() => {
     fetchRooms();
   }, [fetchRooms]);
